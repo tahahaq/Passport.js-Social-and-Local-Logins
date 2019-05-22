@@ -1,6 +1,7 @@
 const router = require("express").Router();
 const passport = require("passport");
 const CLIENT_HOME_PAGE_URL = "http://localhost:3000";
+const CLIENT_SUCCESS_REDIRECT = "http://localhost:3000/login";
 
 // when login is successful, retrieve user info
 router.get("/login/success", (req, res) => {
@@ -35,7 +36,7 @@ router.get("/twitter", passport.authenticate("twitter"));
 router.get(
   "/twitter/redirect",
   passport.authenticate("twitter", {
-    successRedirect: CLIENT_HOME_PAGE_URL,
+    successRedirect: CLIENT_SUCCESS_REDIRECT,
     failureRedirect: "/auth/login/failed"
   })
 );
