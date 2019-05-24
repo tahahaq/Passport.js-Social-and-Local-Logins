@@ -12,14 +12,14 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser"); // parse cookie header
 
 // connect to mongodb
-mongoose.connect(keys.MONGODB_URI, () => {
+mongoose.connect(keys.MONGODB.MONGODB_URI, () => {
   console.log("connected to mongo db");
 });
 
 app.use(
   cookieSession({
     name: "session",
-    keys: [keys.COOKIE_KEY],
+    keys: [keys.SESSION.COOKIE_KEY],
     maxAge: 24 * 60 * 60 * 100
   })
 );
