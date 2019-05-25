@@ -2,7 +2,7 @@ const passport = require("passport");
 const TwitterStrategy = require("passport-twitter");
 const keys = require("./keys");
 const InstagramStrategy = require("passport-instagram");
-const RedditStrategy = require("passport-reddit");
+const RedditStrategy = require('passport-reddit').Strategy;
 const User = require("../models/user-model");
 
 // serialize the user.id to save in the cookie session
@@ -22,6 +22,62 @@ passport.deserializeUser((id, done) => {
         });
 });
 
+
+
+
+passport.use(
+    new  RedditStrategy(
+        {
+            clientID: keys.TOKENS.redditAuth.clientID,
+            clientSecret: keys.TOKENS.redditAuth.clientSecret,
+            callbackURL:"/auth/reddit/redirect"
+        },
+        async (token, tokenSecret, profile, done) => {
+            // find  user in UserModel
+            const newUser = await new User({
+                name: profile._json.data.full_name,
+                screen_name: profile._json.data.username,
+                social_id: profile._json.data.id,
+                social_platform_name: "reddit",
+                profile_image_url: profile._json.data.profile_picture,
+                email: null
+            }).save();
+            if (newUser) {
+                done(null, newUser);
+            }
+
+        }
+    )
+);
+
+
+//////////////////////////////////////////////    INSTAGRAM AUTH      ////////////////////////////////////////////////
+
+
+passport.use('instagram-authz',
+    new InstagramStrategy(
+        {
+            clientID: keys.TOKENS.instagramAuth.clientID,
+            clientSecret: keys.TOKENS.instagramAuth.clientSecret,
+            callbackURL:"/auth/instagram/redirect/loggedIn"
+        },
+        async (token, tokenSecret, profile, done) => {
+            // find  user in UserModel
+            const newUser = await new User({
+                name: profile._json.data.full_name,
+                screen_name: profile._json.data.username,
+                social_id: profile._json.data.id,
+                social_platform_name: "instagram",
+                profile_image_url: profile._json.data.profile_picture,
+                email: null
+            }).save();
+            if (newUser) {
+                done(null, newUser);
+            }
+
+        }
+    )
+);
 
 passport.use(
     new InstagramStrategy(
@@ -48,12 +104,15 @@ passport.use(
     )
 );
 
+//////////////////////////////////////////////    TWITTER AUTH      ////////////////////////////////////////////////
+
+
 passport.use('twitter-authz',
     new TwitterStrategy(
         {
             consumerKey: keys.TOKENS.twitterAuth.TWITTER_CONSUMER_KEY,
             consumerSecret: keys.TOKENS.twitterAuth.TWITTER_CONSUMER_SECRET,
-            callbackURL: "http://localhost:4000/auth/twitter/redirect/test"
+            callbackURL: "http://localhost:4000/auth/twitter/redirect/loggedIn"
         },
         async (token, tokenSecret, profile, done) => {
             console.log("here")

@@ -10,8 +10,8 @@ exports.TOKENS = {
         'TWITTER_TOKEN_SECRET': "19BywUWMzkKmniPEyMdT6KW1tFTejwd4vlYUMsrjTPrnL",
     },
     'instagramAuth': {
-        'clientID': '41b9b949aac64043808601cd741c249e',
-        'clientSecret': 'd953a99651444a50988a35ada038ee12',
+        'clientID': '09705dc092794013b525ad1c8fad0ae7',
+        'clientSecret': '6cd3e802f3fd4d19979bb87611560298',
         'callbackURL': 'http://localhost:4000/auth/instagram/redirect'
     },
     'redditAuth': {

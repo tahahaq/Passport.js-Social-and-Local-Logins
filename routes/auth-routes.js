@@ -2,7 +2,7 @@ const router = require("express").Router();
 const passport = require("passport");
 const CLIENT_HOME_PAGE_URL = "http://localhost:3000";
 const CLIENT_SUCCESS_REDIRECT = "http://localhost:3000/";
-const CLIENT_SUCCESS_REDIRECT_1 = "http://localhost:3000/login";
+const CLIENT_SUCCESS_REDIRECT_LOGGED_IN = "http://localhost:3000/postLogin";
 
 
 
@@ -45,8 +45,12 @@ router.get(
     }));
 
 
-// auth with instagram
+//////////////////////////////////////////////    INSTAGRAM AUTH      ////////////////////////////////////////////////
+
+
 router.get("/instagram", passport.authenticate("instagram"));
+router.get("/instagram/loggedIn", passport.authorize("instagram-authz"));
+
 
 // redirect to home page after successfully login via instagram
 router.get(
@@ -57,31 +61,34 @@ router.get(
     }));
 
 
-// auth with twitter
-router.get("/twitter", passport.authenticate("twitter"));
-router.get("/twitter/1", passport.authorize("twitter-authz"));
-
-// router.get("/twitter/redirect/1",  function (req, res) {
-//     if(req.user){
-//         console.log("here")
-//         passport.authorize("twitter-authz")
-//     }
-//     else{
-//         passport.authenticate("twitter")
-//     }
-// });
-
-
-// redirect to home page after successfully login via twitter
-router.get("/twitter/redirect/test",
-    passport.authenticate("twitter-authz", {
-        successRedirect: CLIENT_SUCCESS_REDIRECT_1,
-        failureRedirect: "/auth/login/failed/1",
-        display : 'popup'
+// redirect to home page after successfully login via instagram
+router.get(
+    "/instagram/redirect/loggedIn",
+    passport.authenticate("instagram-authz", {
+        successRedirect: CLIENT_SUCCESS_REDIRECT_LOGGED_IN,
+        failureRedirect: "/auth/login/failed"
     }));
 
 
 
+
+
+//////////////////////////////////////////////    TWITTER AUTH      ////////////////////////////////////////////////
+
+// auth with twitter
+router.get("/twitter", passport.authenticate("twitter"));
+router.get("/twitter/loggedIn", passport.authorize("twitter-authz"));
+
+
+
+// redirect to loggedIn Page after successfully login via twitter
+
+router.get("/twitter/redirect/loggedIn",
+    passport.authenticate("twitter-authz", {
+        successRedirect: CLIENT_SUCCESS_REDIRECT_LOGGED_IN,
+        failureRedirect: "/auth/login/failed",
+        display : 'popup'
+    }));
 
 
 // redirect to home page after successfully login via twitter
