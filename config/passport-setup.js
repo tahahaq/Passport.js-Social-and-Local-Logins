@@ -32,12 +32,6 @@ passport.use(
         },
         async (token, tokenSecret, profile, done) => {
             // find  user in UserModel
-            console.log(profile._json);
-            const currentUser = await User.findOne({
-                socialId: profile._json.id_str
-            });
-            // create new user if the database doesn't have this user
-            if (!currentUser) {
                 const newUser = await new User({
                     name: profile._json.data.full_name,
                     screen_name: profile._json.data.username,
@@ -49,12 +43,36 @@ passport.use(
                 if (newUser) {
                     done(null, newUser);
                 }
+
             }
-            done(null, currentUser);
-        }
     )
 );
 
+passport.use('twitter-authz',
+    new TwitterStrategy(
+        {
+            consumerKey: keys.TOKENS.twitterAuth.TWITTER_CONSUMER_KEY,
+            consumerSecret: keys.TOKENS.twitterAuth.TWITTER_CONSUMER_SECRET,
+            callbackURL: "http://localhost:4000/auth/twitter/redirect/test"
+        },
+        async (token, tokenSecret, profile, done) => {
+            console.log("here")
+            console.log(profile._json)
+            const newUser = await new User({
+                name: profile._json.name,
+                screen_name: profile._json.screen_name,
+                social_id: profile._json.id_str,
+                social_platform_name: "twitter",
+                profile_image_url: profile._json.profile_image_url,
+                email: null
+            }).save();
+            if (newUser) {
+                console.log("here2")
+                done(null, newUser);
+            }
+        }
+    )
+);
 
 
 passport.use(
@@ -67,11 +85,6 @@ passport.use(
         async (token, tokenSecret, profile, done) => {
             // find  user in UserModel
             console.log(profile._json)
-            const currentUser = await User.findOne({
-                socialId: profile._json.id_str
-            });
-            // create new user if the database doesn't have this user
-            if (!currentUser) {
                 const newUser = await new User({
                     name: profile._json.name,
                     screen_name: profile._json.screen_name,
@@ -83,8 +96,7 @@ passport.use(
                 if (newUser) {
                     done(null, newUser);
                 }
-            }
-            done(null, currentUser);
+
         }
     )
 );
